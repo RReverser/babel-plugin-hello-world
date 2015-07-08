@@ -1,6 +1,6 @@
 import 'better-log/install';
 
-module.exports = function ({ Plugin, acorn, types: t }) {
+module.exports = function ({ Plugin, types: t }) {
 	return new Plugin('hello-world', {
 		visitor: {
 			Program(node, parent, scope, file) {
