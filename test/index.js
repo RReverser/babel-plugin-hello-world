@@ -41,7 +41,11 @@ if (process.argv.indexOf('--watch') >= 0) {
 		clear();
 		console.log('Press Ctrl+C to stop watching...');
 		console.log('================================');
-		runTest();
+		try {
+			runTest();
+		} catch (e) {
+			console.error(chalk.magenta(e.stack));
+		}
 	});
 } else {
 	runTest();
