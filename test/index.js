@@ -36,7 +36,7 @@ function runTest() {
 }
 
 if (process.argv.indexOf('--watch') >= 0) {
-	require('watch').watchTree(__dirname + '/..', function () {
+	require('watch').watchTree(__dirname + '/..', { ignoreDirectoryPattern: /node_modules/ }, function () {
 		delete require.cache[pluginPath];
 		clear();
 		console.log('Press Ctrl+C to stop watching...');
