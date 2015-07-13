@@ -2,9 +2,6 @@ import 'better-log/install';
 
 module.exports = function ({ Plugin, types: t }) {
 	function ifProxy(path, targetPath, methodName, methodArgs) {
-		if (targetPath.isBaseType('string') || targetPath.isBaseType('number') || targetPath.isBaseType('boolean') || targetPath.isBaseType('void')) {
-			return;
-		}
 		var targetNode = targetPath.node, targetExpr = targetNode;
 		if (!targetPath.scope.isStatic(targetNode)) {
 			targetPath.replaceWith(path.scope.generateDeclaredUidIdentifier('target'));
