@@ -1,11 +1,11 @@
 import 'better-log/install';
 
-module.exports = function ({ Plugin, types: t }) {
-	return new Plugin('hello-world', {
+module.exports = function ({ types: t }) {
+	return {
 		visitor: {
-			Program(node, parent, scope, file) {
-				this.unshiftContainer('body', t.expressionStatement(t.literal('use helloworld')));
+			Program(path, file) {
+				path.unshiftContainer('body', t.expressionStatement(t.stringLiteral('use helloworld')));
 			}
 		}
-	});
+	};
 };
