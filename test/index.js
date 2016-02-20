@@ -4,21 +4,38 @@ var chalk = require('chalk');
 var clear = require('clear');
 var diff = require('diff');
 var fs = require('fs');
+var path = require('path');
 
 require('babel-register');
 
 var pluginPath = require.resolve('../src');
 
-function runTest() {
-	var output = babel.transformFileSync(__dirname + '/fixtures/actual.js', {
+function runRests() {
+	var testsPath = __dirname + '/fixtures/';
+
+	fs.readdirSync(testsPath).map(function(item) {
+		return {
+			path: path.join(testsPath, item),
+			name: item,
+		};
+	}).filter(function(item) {
+		return fs.statSync(item.path).isDirectory();
+	}).forEach(runTest);
+}
+
+function runTest(dir) {
+	var output = babel.transformFileSync(dir.path + '/actual.js', {
 		plugins: [pluginPath]
 	});
 
-	var expected = fs.readFileSync(__dirname + '/fixtures/expected.js', 'utf-8');
+	var expected = fs.readFileSync(dir.path + '/expected.js', 'utf-8');
 
 	function normalizeLines(str) {
 		return str.trimRight().replace(/\r\n/g, '\n');
 	}
+
+	process.stdout.write(chalk.bgWhite.black(dir.name));
+	process.stdout.write('\n\n');
 
 	diff.diffLines(normalizeLines(output.code), normalizeLines(expected))
 	.forEach(function (part) {
@@ -28,10 +45,12 @@ function runTest() {
 		} else if (part.removed) {
 			value = chalk.red(part.value);
 		}
+
+
 		process.stdout.write(value);
 	});
 
-	console.log();
+	process.stdout.write('\n\n\n');
 }
 
 if (process.argv.indexOf('--watch') >= 0) {
@@ -41,11 +60,11 @@ if (process.argv.indexOf('--watch') >= 0) {
 		console.log('Press Ctrl+C to stop watching...');
 		console.log('================================');
 		try {
-			runTest();
+			runRests();
 		} catch (e) {
 			console.error(chalk.magenta(e.stack));
 		}
 	});
 } else {
-	runTest();
+	runRests();
 }
