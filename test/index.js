@@ -10,7 +10,7 @@ require('babel-register');
 
 var pluginPath = require.resolve('../src');
 
-function runRests() {
+function runTests() {
 	var testsPath = __dirname + '/fixtures/';
 
 	fs.readdirSync(testsPath).map(function(item) {
@@ -60,11 +60,11 @@ if (process.argv.indexOf('--watch') >= 0) {
 		console.log('Press Ctrl+C to stop watching...');
 		console.log('================================');
 		try {
-			runRests();
+			runTests();
 		} catch (e) {
 			console.error(chalk.magenta(e.stack));
 		}
 	});
 } else {
-	runRests();
+	runTests();
 }
