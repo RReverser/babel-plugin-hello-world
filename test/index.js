@@ -13,17 +13,20 @@ var pluginPath = require.resolve('../src');
 function runTests() {
 	var testsPath = __dirname + '/fixtures/';
 
-	fs.readdirSync(testsPath).map(function(item) {
+	var exitCode = fs.readdirSync(testsPath).map(function(item) {
 		return {
 			path: path.join(testsPath, item),
 			name: item,
 		};
 	}).filter(function(item) {
 		return fs.statSync(item.path).isDirectory();
-	}).forEach(runTest);
+	}).map(runTest).reduce((acc, cur) => acc + cur, 0);
+
+	return exitCode;
 }
 
 function runTest(dir) {
+	var exitCode = 0;
 	var output = babel.transformFileSync(dir.path + '/actual.js', {
 		plugins: [pluginPath]
 	});
@@ -42,8 +45,10 @@ function runTest(dir) {
 		var value = part.value;
 		if (part.added) {
 			value = chalk.green(part.value);
+			exitCode = 1;
 		} else if (part.removed) {
 			value = chalk.red(part.value);
+			exitCode = 1;
 		}
 
 
@@ -51,6 +56,8 @@ function runTest(dir) {
 	});
 
 	process.stdout.write('\n\n\n');
+
+	return exitCode;
 }
 
 if (process.argv.indexOf('--watch') >= 0) {
@@ -66,5 +73,6 @@ if (process.argv.indexOf('--watch') >= 0) {
 		}
 	});
 } else {
-	runTests();
+	var exitCode = runTests();
+	process.exit(exitCode);
 }
