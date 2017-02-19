@@ -28,6 +28,7 @@ function runTests() {
 function runTest(dir) {
 	var exitCode = 0;
 	var output = babel.transformFileSync(dir.path + '/actual.js', {
+		babelrc: false,
 		plugins: [pluginPath]
 	});
 
